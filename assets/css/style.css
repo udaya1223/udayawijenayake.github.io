@@ -12,21 +12,20 @@ body {
   margin: 0 auto;
 }
 
-
 .social-links {
   margin-top: 0.75rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem; /* tighter spacing */
 }
 
 .social-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+  width: 24px;      /* smaller icon container */
+  height: 24px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   text-decoration: none;
   transition: background 0.2s ease, transform 0.2s ease;
@@ -38,9 +37,9 @@ body {
 }
 
 .social-icon {
-  width: 18px;
-  height: 18px;
-  fill: #f9fafb; /* light icon color on dark header */
+  width: 14px;    /* smaller SVG */
+  height: 14px;
+  fill: #f9fafb;
 }
 
 header {
