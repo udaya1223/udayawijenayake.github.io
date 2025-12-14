@@ -21,9 +21,6 @@
         <div class="links">
           <a href="index.html">Home</a>
           <a href="assets/docs/Udaya_Wijenayake_CV.pdf" target="_blank">CV (PDF)</a>
-          <!-- Add your real profile links -->
-          <!-- <a href="https://scholar.google.com/..." target="_blank">Google Scholar</a> -->
-          <!-- <a href="https://www.researchgate.net/..." target="_blank">ResearchGate</a> -->
         </div>
       </div>
       <img src="assets/img/profile.jpg" alt="Udaya Wijenayake" class="profile-pic" />
@@ -46,127 +43,14 @@
     <section>
       <h2>Publications</h2>
       <p>
-        This page lists selected publications, grouped by type and year.
-        For a complete and most up-to-date list, please refer to my
-        <a href="https://scholar.google.com" target="_blank">Google Scholar profile</a>
-        (link to be updated).
+        This list is generated automatically from a BibTeX file
+        (<code>publications.bib</code>) in the repository.
       </p>
     </section>
 
-    <!-- ===================== JOURNAL ARTICLES ===================== -->
-    <section id="journals">
-      <h2>Journal Articles</h2>
-
-      <h3>2025</h3>
-      <ol class="pub-list">
-        <!-- Example item – replace with your own -->
-        <li>
-          <span class="pub-authors">Wijenayake, U., <em>et al.</em></span>,
-          <span class="pub-title">“Title of your 2025 journal paper.”</span>
-          <span class="pub-venue"><em>Journal Name</em>,</span>
-          <span class="pub-details">vol. X, no. Y, pp. 1–10, 2025.</span>
-          <!-- Optional: DOI / link -->
-          <!-- <a href="https://doi.org/..." target="_blank">DOI</a> -->
-        </li>
-        <!-- Add more 2025 journal papers here -->
-      </ol>
-
-      <h3>2024</h3>
-      <ol class="pub-list">
-        <!-- Copy and adapt for each paper -->
-        <li>
-          <span class="pub-authors">Author1, A., Author2, B., and Wijenayake, U.</span>,
-          <span class="pub-title">“Title of your 2024 journal paper.”</span>
-          <span class="pub-venue"><em>Another Journal</em>,</span>
-          <span class="pub-details">2024.</span>
-        </li>
-      </ol>
-
-      <!-- Add older years as needed -->
-      <!--
-      <h3>2023</h3>
-      <ol class="pub-list">
-        <li>...</li>
-      </ol>
-      -->
-    </section>
-
-    <!-- ===================== CONFERENCE PAPERS ===================== -->
-    <section id="conferences">
-      <h2>Conference Papers</h2>
-
-      <h3>2025</h3>
-      <ol class="pub-list">
-        <li>
-          <span class="pub-authors">Wijenayake, U., <em>et al.</em></span>,
-          <span class="pub-title">“Title of your 2025 conference paper.”</span>
-          <span class="pub-venue"><em>Proc. of Conference Name (CONF ’25)</em>,</span>
-          <span class="pub-details">pp. 1–6, 2025.</span>
-        </li>
-      </ol>
-
-      <h3>2024</h3>
-      <ol class="pub-list">
-        <li>
-          <span class="pub-authors">Author1, A., and Wijenayake, U.</span>,
-          <span class="pub-title">“Title of your 2024 conference paper.”</span>
-          <span class="pub-venue"><em>International Conference on Something</em>,</span>
-          <span class="pub-details">2024.</span>
-        </li>
-      </ol>
-
-      <!-- Add older years similarly -->
-    </section>
-
-    <!-- ===================== BOOK CHAPTERS ===================== -->
-    <section id="book-chapters">
-      <h2>Book Chapters</h2>
-
-      <h3>2023</h3>
-      <ol class="pub-list">
-        <li>
-          <span class="pub-authors">Wijenayake, U., <em>et al.</em></span>,
-          <span class="pub-title">“Title of your book chapter.”</span>
-          <span class="pub-venue">
-            In <em>Book Title</em>, Publisher, 2023.
-          </span>
-        </li>
-      </ol>
-
-      <!-- Add more years if needed -->
-    </section>
-
-    <!-- ===================== THESES / DISSERTATIONS ===================== -->
-    <section id="theses">
-      <h2>Theses</h2>
-      <ol class="pub-list">
-        <li>
-          <span class="pub-title">PhD Thesis:</span>
-          <span class="pub-authors">U. Wijenayake</span>,
-          <span class="pub-title">“Title of PhD thesis.”</span>
-          <span class="pub-venue">
-            Kyungpook National University, South Korea, 2018.
-          </span>
-        </li>
-        <li>
-          <span class="pub-title">MSc Thesis:</span>
-          <span class="pub-authors">U. Wijenayake</span>,
-          <span class="pub-title">“Title of MSc thesis.”</span>
-          <span class="pub-venue">
-            Kyungpook National University, South Korea, 2013.
-          </span>
-        </li>
-      </ol>
-    </section>
-
-    <!-- ===================== OTHER PUBLICATIONS ===================== -->
-    <section id="other-pubs">
-      <h2>Other Publications</h2>
-      <ul class="pub-list">
-        <li>
-          Technical reports, workshop presentations, posters, and other outputs can be listed here.
-        </li>
-      </ul>
+    <!-- Where the script will inject content -->
+    <section id="publications-root">
+      <p>Loading publications…</p>
     </section>
   </main>
 
@@ -174,10 +58,144 @@
     <div class="container">
       <p>© <span id="year"></span> Udaya Wijenayake · Department of Computer Engineering, University of Sri Jayewardenepura</p>
     </div>
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
   </footer>
+
+  <!-- 1) BibTeX parser library from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@jonny/bibtex-parse-js@0.0.26/bibtexParse.js"></script>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Map BibTeX entry types to human-readable section names
+    const TYPE_LABELS = {
+      article: "Journal Articles",
+      inproceedings: "Conference Papers",
+      incollection: "Book Chapters",
+      book: "Books",
+      phdthesis: "PhD Theses",
+      mastersthesis: "Master's Theses",
+      misc: "Other Publications"
+    };
+
+    const TYPE_ORDER = [
+      "article",
+      "inproceedings",
+      "incollection",
+      "book",
+      "phdthesis",
+      "mastersthesis",
+      "misc"
+    ];
+
+    async function loadPublications() {
+      const root = document.getElementById("publications-root");
+
+      try {
+        const response = await fetch("publications.bib");
+        if (!response.ok) {
+          root.innerHTML = "<p>Could not load publications.bib.</p>";
+          return;
+        }
+
+        const bibtexText = await response.text();
+        const entries = bibtexParse.toJSON(bibtexText);
+
+        // Group by type and year
+        const grouped = {}; // { type: { year: [entries...] } }
+
+        entries.forEach((entry) => {
+          const type = (entry.entryType || "misc").toLowerCase();
+          const tags = entry.entryTags || {};
+          const year = tags.year || "No year";
+
+          if (!grouped[type]) grouped[type] = {};
+          if (!grouped[type][year]) grouped[type][year] = [];
+          grouped[type][year].push(entry);
+        });
+
+        // Build HTML
+        let html = "";
+
+        TYPE_ORDER.forEach((type) => {
+          if (!grouped[type]) return;
+
+          const typeLabel = TYPE_LABELS[type] || type;
+
+          html += `<section class="pub-section"><h2>${typeLabel}</h2>`;
+
+          // Sort years descending (so latest first)
+          const years = Object.keys(grouped[type]).sort((a, b) => {
+            // Put non-numeric years at the end
+            const na = parseInt(a, 10);
+            const nb = parseInt(b, 10);
+            if (isNaN(na) && isNaN(nb)) return a.localeCompare(b);
+            if (isNaN(na)) return 1;
+            if (isNaN(nb)) return -1;
+            return nb - na;
+          });
+
+          years.forEach((year) => {
+            html += `<h3>${year}</h3><ol class="pub-list">`;
+
+            grouped[type][year].forEach((entry) => {
+              const t = entry.entryTags || {};
+              const authors = t.author || "";
+              const title = t.title || "";
+              const journalOrBook =
+                t.journal || t.booktitle || t.school || t.howpublished || "";
+              const doi = t.doi || "";
+              const url = t.url || "";
+
+              let venueStr = journalOrBook ? `<em>${journalOrBook}</em>` : "";
+              let detailsParts = [];
+
+              if (t.volume) detailsParts.push("vol. " + t.volume);
+              if (t.number) detailsParts.push("no. " + t.number);
+              if (t.pages) detailsParts.push("pp. " + t.pages);
+
+              const detailsStr = detailsParts.join(", ");
+
+              html += "<li>";
+
+              if (authors) {
+                html += `<span class="pub-authors">${authors}</span>, `;
+              }
+              if (title) {
+                html += `<span class="pub-title">“${title}”</span>`;
+              }
+              if (venueStr) {
+                html += `, <span class="pub-venue">${venueStr}</span>`;
+              }
+              if (detailsStr) {
+                html += `, <span class="pub-details">${detailsStr}</span>`;
+              }
+              if (doi) {
+                html += `, <a href="https://doi.org/${doi}" target="_blank">DOI</a>`;
+              } else if (url) {
+                html += `, <a href="${url}" target="_blank">Link</a>`;
+              }
+
+              html += "</li>";
+            });
+
+            html += "</ol>";
+          });
+
+          html += "</section>";
+        });
+
+        if (!html) {
+          html = "<p>No publications found in publications.bib.</p>";
+        }
+
+        root.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        root.innerHTML = "<p>Error while loading publications.</p>";
+      }
+    }
+
+    loadPublications();
+  </script>
 </body>
 </html>
-
