@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  
   <header>
     <div class="container header-content">
       
@@ -37,7 +38,8 @@
       <div class="container nav-links">
         <a href="index.html">Home</a>
         <a href="research.html">Research</a>
-        <a href="publications.html" class="active-link">Publications</a> <a href="services.html">Services</a>
+        <a href="publications.html" class="active-link">Publications</a>
+        <a href="services.html">Services</a>
         <a href="teaching.html">Teaching</a>
         <a href="blogs.html">Blogs</a>
         <a href="contact.html">Contact</a>
@@ -101,7 +103,6 @@
       const root = document.getElementById("publications-root");
 
       try {
-        // NOTE: Ensure publications.bib file exists in the correct location
         const response = await fetch("publications.bib");
         if (!response.ok) {
           root.innerHTML = "<p>Could not load <code>publications.bib</code>. Ensure the file exists and is accessible.</p>";
@@ -111,13 +112,11 @@
         const bibtexText = await response.text();
         const entries = bibtexParse.toJSON(bibtexText);
 
-        // Grouped structure: { type: { year: [entries...] } }
         const grouped = {};
 
         entries.forEach((entry) => {
           const type = (entry.entryType || "misc").toLowerCase();
 
-          // Normalize tag keys to lowercase (handles AUTHOR vs author, etc.)
           const rawTags = entry.entryTags || {};
           const tags = {};
           Object.keys(rawTags).forEach((key) => {
@@ -129,12 +128,10 @@
           if (!grouped[type]) grouped[type] = {};
           if (!grouped[type][year]) grouped[type][year] = [];
 
-          // Store normalized tags on the entry for later use
           entry._normTags = tags;
           grouped[type][year].push(entry);
         });
 
-        // Build HTML
         let html = "";
 
         TYPE_ORDER.forEach((type) => {
@@ -143,7 +140,6 @@
           const typeLabel = TYPE_LABELS[type] || type;
           html += `<section class="pub-section"><h2>${typeLabel}</h2>`;
 
-          // Sort years descending (so 2025, 2024, 2023, …)
           const years = Object.keys(grouped[type]).sort((a, b) => {
             const na = parseInt(a, 10);
             const nb = parseInt(b, 10);
@@ -164,7 +160,7 @@
                 t.journal || t.booktitle || t.school || t.howpublished || "";
               const doi = t.doi || "";
               const url = t.url || "";
-              const abstractUrl = t.abstracturl || ""; // Added abstract URL
+              const abstractUrl = t.abstracturl || "";
 
               let venueStr = journalOrBook ? `<span class="pub-venue">${journalOrBook}</span>` : "";
               let detailsParts = [];
@@ -173,7 +169,6 @@
               if (t.number) detailsParts.push("no. " + t.number);
               if (t.pages) detailsParts.push("pp. " + t.pages);
 
-              // Handle MDPI-style article numbers when pages are absent
               if (t["article-number"] && !t.pages) {
                 detailsParts.push("Article " + t["article-number"]);
               }
@@ -181,7 +176,6 @@
               const detailsStr = detailsParts.join(", ");
               const links = [];
 
-              // Link Priority: DOI > URL
               if (doi) {
                 links.push(`<a href="https://doi.org/${doi}" target="_blank">DOI</a>`);
               } else if (url) {
@@ -190,7 +184,6 @@
               if (abstractUrl) {
                 links.push(`<a href="${abstractUrl}" target="_blank">Abstract</a>`);
               }
-              // Add other links (e.g., PDF) if they were in the BibTeX entry.
 
               html += "<li>";
 
@@ -210,11 +203,11 @@
               if (detailsStr) {
                 html += `, <span class="pub-details">${detailsStr}</span>`;
               }
-              // 5. Year (Already in the <h3>, but sometimes added for full citation)
+              // 5. Year
               html += ` (${year}).`;
 
 
-              // 6. Links (Separated at the end of the line for clarity)
+              // 6. Links
               if (links.length > 0) {
                  html += ` <span class="pub-links"> | ${links.join(" | ")}</span>`;
               }
