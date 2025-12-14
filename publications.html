@@ -21,6 +21,8 @@
         <div class="links">
           <a href="index.html">Home</a>
           <a href="assets/docs/Udaya_Wijenayake_CV.pdf" target="_blank">CV (PDF)</a>
+          <!-- Add your actual profile links if you like -->
+          <!-- <a href="https://scholar.google.com/..." target="_blank">Google Scholar</a> -->
         </div>
       </div>
       <img src="assets/img/profile.jpg" alt="Udaya Wijenayake" class="profile-pic" />
@@ -43,12 +45,13 @@
     <section>
       <h2>Publications</h2>
       <p>
-        This list is generated automatically from a BibTeX file
-        (<code>publications.bib</code>) in the repository.
+        This list is generated automatically from the BibTeX file
+        <code>publications.bib</code> in this repository. Add or edit entries
+        in that file to update this page.
       </p>
     </section>
 
-    <!-- Where the script will inject content -->
+    <!-- Publications will be injected here by JavaScript -->
     <section id="publications-root">
       <p>Loading publications…</p>
     </section>
@@ -56,34 +59,43 @@
 
   <footer>
     <div class="container">
-      <p>© <span id="year"></span> Udaya Wijenayake · Department of Computer Engineering, University of Sri Jayewardenepura</p>
+      <p>
+        © <span id="year"></span>
+        Udaya Wijenayake · Department of Computer Engineering, University of Sri Jayewardenepura
+      </p>
     </div>
   </footer>
 
-  <!-- 1) BibTeX parser library from CDN -->
+  <!-- BibTeX parser library -->
   <script src="https://cdn.jsdelivr.net/npm/@jonny/bibtex-parse-js@0.0.26/bibtexParse.js"></script>
 
   <script>
+    // Set footer year
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Map BibTeX entry types to human-readable section names
+    // Human-friendly labels for BibTeX entry types
     const TYPE_LABELS = {
       article: "Journal Articles",
       inproceedings: "Conference Papers",
       incollection: "Book Chapters",
+      proceedings: "Edited Proceedings",
       book: "Books",
       phdthesis: "PhD Theses",
       mastersthesis: "Master's Theses",
+      techreport: "Technical Reports",
       misc: "Other Publications"
     };
 
+    // Order in which sections appear
     const TYPE_ORDER = [
       "article",
       "inproceedings",
       "incollection",
+      "proceedings",
       "book",
       "phdthesis",
       "mastersthesis",
+      "techreport",
       "misc"
     ];
 
@@ -93,23 +105,33 @@
       try {
         const response = await fetch("publications.bib");
         if (!response.ok) {
-          root.innerHTML = "<p>Could not load publications.bib.</p>";
+          root.innerHTML = "<p>Could not load <code>publications.bib</code>.</p>";
           return;
         }
 
         const bibtexText = await response.text();
         const entries = bibtexParse.toJSON(bibtexText);
 
-        // Group by type and year
-        const grouped = {}; // { type: { year: [entries...] } }
+        // Grouped structure: { type: { year: [entries...] } }
+        const grouped = {};
 
         entries.forEach((entry) => {
           const type = (entry.entryType || "misc").toLowerCase();
-          const tags = entry.entryTags || {};
+
+          // Normalize tag keys to lowercase (handles AUTHOR vs author, etc.)
+          const rawTags = entry.entryTags || {};
+          const tags = {};
+          Object.keys(rawTags).forEach((key) => {
+            tags[key.toLowerCase()] = rawTags[key];
+          });
+
           const year = tags.year || "No year";
 
           if (!grouped[type]) grouped[type] = {};
           if (!grouped[type][year]) grouped[type][year] = [];
+
+          // Store normalized tags on the entry for later use
+          entry._normTags = tags;
           grouped[type][year].push(entry);
         });
 
@@ -120,12 +142,10 @@
           if (!grouped[type]) return;
 
           const typeLabel = TYPE_LABELS[type] || type;
-
           html += `<section class="pub-section"><h2>${typeLabel}</h2>`;
 
-          // Sort years descending (so latest first)
+          // Sort years descending (so 2025, 2024, 2023, …)
           const years = Object.keys(grouped[type]).sort((a, b) => {
-            // Put non-numeric years at the end
             const na = parseInt(a, 10);
             const nb = parseInt(b, 10);
             if (isNaN(na) && isNaN(nb)) return a.localeCompare(b);
@@ -138,7 +158,7 @@
             html += `<h3>${year}</h3><ol class="pub-list">`;
 
             grouped[type][year].forEach((entry) => {
-              const t = entry.entryTags || {};
+              const t = entry._normTags || {};
               const authors = t.author || "";
               const title = t.title || "";
               const journalOrBook =
@@ -152,6 +172,11 @@
               if (t.volume) detailsParts.push("vol. " + t.volume);
               if (t.number) detailsParts.push("no. " + t.number);
               if (t.pages) detailsParts.push("pp. " + t.pages);
+
+              // Handle MDPI-style article numbers when pages are absent
+              if (t["article-number"] && !t.pages) {
+                detailsParts.push("Article " + t["article-number"]);
+              }
 
               const detailsStr = detailsParts.join(", ");
 
@@ -169,6 +194,7 @@
               if (detailsStr) {
                 html += `, <span class="pub-details">${detailsStr}</span>`;
               }
+
               if (doi) {
                 html += `, <a href="https://doi.org/${doi}" target="_blank">DOI</a>`;
               } else if (url) {
@@ -185,7 +211,7 @@
         });
 
         if (!html) {
-          html = "<p>No publications found in publications.bib.</p>";
+          html = "<p>No publications found in <code>publications.bib</code>.</p>";
         }
 
         root.innerHTML = html;
