@@ -9,7 +9,8 @@
 <body>
   <header>
     <div class="container header-content">
-      <div>
+      
+      <div class="header-text-container">
         <h1>Udaya Wijenayake</h1>
         <p class="subtitle">
           Senior Lecturer, Department of Computer Engineering,<br />
@@ -18,23 +19,25 @@
         <p class="tags">
           Computer Vision · Image Processing · Machine Learning · Human–Computer Interaction
         </p>
-       <div class="links">
+        <div class="links">
           <a href="https://scholar.google.com/citations?hl=en&user=zZNLOAwAAAAJ" target="_blank">Google Scholar</a>
-          <a href="https://www.researchgate.net/" target="_blank">ResearchGate</a>
+          <a href="https://www.researchgate.net/profile/Udaya-Wijenayake" target="_blank">ResearchGate</a>
           <a href="https://www.linkedin.com/in/udaya-wijenayake-395749144/" target="_blank">LinkedIn</a>
-          <!-- Add your actual profile links -->
+          <a href="https://github.com/udayawijenayake" target="_blank">GitHub</a>
           <a href="assets/docs/Udaya_Wijenayake_CV.pdf" target="_blank">CV (PDF)</a>
         </div>
       </div>
-      <img src="assets/img/profile.jpg" alt="Udaya Wijenayake" class="profile-pic" />
+      
+      <div class="profile-pic-container"> 
+        <img src="assets/img/profile.jpg" alt="Udaya Wijenayake" class="profile-pic" />
+      </div>
     </div>
 
     <nav>
-      <div class="container">
+      <div class="container nav-links">
         <a href="index.html">Home</a>
         <a href="research.html">Research</a>
-        <a href="publications.html">Publications</a>
-        <a href="services.html">Services</a>
+        <a href="publications.html" class="active-link">Publications</a> <a href="services.html">Services</a>
         <a href="teaching.html">Teaching</a>
         <a href="blogs.html">Blogs</a>
         <a href="contact.html">Contact</a>
@@ -45,9 +48,9 @@
   <main class="container">
     <section>
       <h2>Publications</h2>
+      <p>A list of my publications compiled from BibTeX. You can view my complete profile on <a href="https://scholar.google.com/citations?hl=en&user=zZNLOAwAAAAJ" target="_blank">Google Scholar</a>.</p>
     </section>
 
-    <!-- Publications will be injected here by JavaScript -->
     <section id="publications-root">
       <p>Loading publications…</p>
     </section>
@@ -56,18 +59,17 @@
   <footer>
     <div class="container">
       <p>
-        © <span id="year"></span>
+        © <span data-year></span>
         Udaya Wijenayake · Department of Computer Engineering, University of Sri Jayewardenepura
       </p>
     </div>
   </footer>
 
-  <!-- BibTeX parser library -->
   <script src="https://cdn.jsdelivr.net/npm/@jonny/bibtex-parse-js@0.0.26/bibtexParse.js"></script>
 
   <script>
-    // Set footer year
-    document.getElementById("year").textContent = new Date().getFullYear();
+    // Set footer year using data-year attribute
+    document.querySelector("[data-year]").textContent = new Date().getFullYear();
 
     // Human-friendly labels for BibTeX entry types
     const TYPE_LABELS = {
@@ -99,9 +101,10 @@
       const root = document.getElementById("publications-root");
 
       try {
+        // NOTE: Ensure publications.bib file exists in the correct location
         const response = await fetch("publications.bib");
         if (!response.ok) {
-          root.innerHTML = "<p>Could not load <code>publications.bib</code>.</p>";
+          root.innerHTML = "<p>Could not load <code>publications.bib</code>. Ensure the file exists and is accessible.</p>";
           return;
         }
 
@@ -161,8 +164,9 @@
                 t.journal || t.booktitle || t.school || t.howpublished || "";
               const doi = t.doi || "";
               const url = t.url || "";
+              const abstractUrl = t.abstracturl || ""; // Added abstract URL
 
-              let venueStr = journalOrBook ? `<em>${journalOrBook}</em>` : "";
+              let venueStr = journalOrBook ? `<span class="pub-venue">${journalOrBook}</span>` : "";
               let detailsParts = [];
 
               if (t.volume) detailsParts.push("vol. " + t.volume);
@@ -175,26 +179,44 @@
               }
 
               const detailsStr = detailsParts.join(", ");
+              const links = [];
+
+              // Link Priority: DOI > URL
+              if (doi) {
+                links.push(`<a href="https://doi.org/${doi}" target="_blank">DOI</a>`);
+              } else if (url) {
+                links.push(`<a href="${url}" target="_blank">Link</a>`);
+              }
+              if (abstractUrl) {
+                links.push(`<a href="${abstractUrl}" target="_blank">Abstract</a>`);
+              }
+              // Add other links (e.g., PDF) if they were in the BibTeX entry.
 
               html += "<li>";
 
+              // 1. Authors
               if (authors) {
                 html += `<span class="pub-authors">${authors}</span>, `;
               }
+              // 2. Title
               if (title) {
                 html += `<span class="pub-title">“${title}”</span>`;
               }
+              // 3. Venue
               if (venueStr) {
-                html += `, <span class="pub-venue">${venueStr}</span>`;
+                html += `, ${venueStr}`;
               }
+              // 4. Details (Vol, Pages, etc.)
               if (detailsStr) {
                 html += `, <span class="pub-details">${detailsStr}</span>`;
               }
+              // 5. Year (Already in the <h3>, but sometimes added for full citation)
+              html += ` (${year}).`;
 
-              if (doi) {
-                html += `, <a href="https://doi.org/${doi}" target="_blank">DOI</a>`;
-              } else if (url) {
-                html += `, <a href="${url}" target="_blank">Link</a>`;
+
+              // 6. Links (Separated at the end of the line for clarity)
+              if (links.length > 0) {
+                 html += ` <span class="pub-links"> | ${links.join(" | ")}</span>`;
               }
 
               html += "</li>";
@@ -213,7 +235,7 @@
         root.innerHTML = html;
       } catch (err) {
         console.error(err);
-        root.innerHTML = "<p>Error while loading publications.</p>";
+        root.innerHTML = "<p>Error while loading publications. Check your console for details.</p>";
       }
     }
 
