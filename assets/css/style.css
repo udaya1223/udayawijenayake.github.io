@@ -1,17 +1,19 @@
 /*
- * PROFESSIONAL & LIGHT STYLESHEET (Final Version)
- * Accent Color: #004aad (Deep Blue)
+ * PROFESSIONAL & LIGHT STYLESHEET (Final Version - Pure Orange Accent)
  */
 
 :root {
-  --color-accent: #F97316; /* Bright Orange */
+  --color-accent: #F97316; /* Bright Orange (Primary accent, replacing all blue) */
+  --color-highlight: #F97316; /* Bright Orange (Used for profile border, subtitle, tags) */
+  
   --color-text: #212529; /* Near-black text (main content foreground) */
-  --color-subtle: #9ca3af; /* Light grey/silver (subtle text in dark header) */
+  --color-subtle-light: #6c757d; /* Darker gray for subtle text in light content (nav links, pub details) */
+  --color-subtle-dark: #9ca3af; /* Light grey/silver (subtle text in dark header) */
+  
   --color-bg: #f8f9fa; /* Very light grey background */
   --color-light: #ffffff; /* Pure white (header foreground/icon color/content background) */
   --color-border: #dee2e6; /* Light grey border */
   --color-dark-header: #1f2933; /* Dark header background */
-  --color-highlight: #F97316; /* NEW: Bright Orange for the profile border */
 }
 
 body {
@@ -24,13 +26,15 @@ body {
 }
 
 a {
+  /* General links use the Orange accent color */
   color: var(--color-accent);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: #002d6b; /* Darker blue on hover */
+  /* Darker orange on hover */
+  color: #c95d12; 
   text-decoration: underline;
 }
 
@@ -46,7 +50,8 @@ header {
   background: var(--color-dark-header); /* DARK BACKGROUND */
   color: var(--color-light); /* LIGHT FOREGROUND */
   padding: 2.5rem 0 0;
-  border-bottom: 3px solid var(--color-accent); /* Strong accent border underneath */
+  /* CHANGE: Header bottom line uses the Orange accent color */
+  border-bottom: 3px solid var(--color-accent); 
 }
 
 .header-content {
@@ -67,22 +72,25 @@ header {
 .subtitle {
   margin: 0;
   font-size: 1rem;
-  color: var(--color-subtle);
+  /* Subtitle uses the Orange highlight color */
+  color: var(--color-highlight);
 }
 
 .tags {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: var(--color-subtle);
+  /* Tags use the Orange highlight color */
+  color: var(--color-highlight);
   opacity: 1;
 }
 
-/* Text links in publications.html header */
+/* Text links (e.g., in publications.html header) */
 .links a {
-    color: var(--color-subtle);
+    /* Text links use the Orange highlight color */
+    color: var(--color-highlight);
     font-size: 0.9rem;
     padding: 0.25rem 0;
-    border-bottom: 1px dotted var(--color-subtle);
+    border-bottom: 1px dotted var(--color-highlight);
 }
 
 .links a:hover {
@@ -105,33 +113,31 @@ header {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  /* Default state: subtle light background, white icon/text */
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   text-decoration: none;
-  /* Animation transition setup */
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   opacity: 1;
-  color: var(--color-light); /* Sets 'currentColor' for icons */
+  color: var(--color-light);
 }
 
 .social-link:hover {
-  /* Hover State: Accent color background, scale and glow */
-  background: var(--color-accent); 
-  border-color: var(--color-accent);
-  transform: scale(1.05); /* Slight growth/pulse effect */
-  box-shadow: 0 0 10px rgba(0, 74, 173, 0.8); /* Glow effect */
+  /* Hover background uses the Orange highlight color */
+  background: var(--color-highlight); 
+  border-color: var(--color-highlight);
+  transform: scale(1.05);
+  /* Hover shadow uses the Orange highlight color (high opacity for solid color) */
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.8); 
   opacity: 1;
 }
 
 .social-icon {
   width: 20px;
   height: 20px;
-  fill: var(--color-light); 
+  fill: var(--color-light);
   transition: fill 0.3s;
 }
 
-/* Enforce white color for all parts of the SVG */
 .social-link svg {
     fill: var(--color-light);
     stroke: var(--color-light);
@@ -149,11 +155,18 @@ header {
 .profile-pic-container {
   width: 150px;
   height: 150px;
-  border: 4px solid var(--color-highlight); /* Border is light against the dark background */
+  /* Profile border uses the Orange highlight color */
+  border: 4px solid var(--color-highlight); 
   border-radius: 50%;
   padding: 0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  /* Shadow uses the Orange highlight color */
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.7); 
+  transition: box-shadow 0.3s ease-in-out;
   flex-shrink: 0;
+}
+
+.profile-pic-container:hover {
+    box-shadow: 0 0 25px var(--color-highlight);
 }
 
 .profile-pic {
@@ -167,10 +180,10 @@ header {
 /* --- NAVIGATION BAR --- */
 
 nav {
-  /* Separated from header, still uses light/white background */
   background: var(--color-light);
   margin-top: 0;
-  border-bottom: 1px solid var(--color-border);
+  /* CHANGE: Nav line uses the Orange accent color */
+  border-bottom: 1px solid var(--color-accent);
 }
 
 .nav-links {
@@ -182,7 +195,8 @@ nav {
 }
 
 nav a {
-  color: var(--color-subtle); /* Dark text on white background */
+  /* Nav links use a dark subtle color on the light background */
+  color: var(--color-subtle-light); 
   text-decoration: none;
   font-size: 1rem;
   padding: 0.25rem 0;
@@ -192,7 +206,8 @@ nav a {
 
 nav a:hover,
 nav a.active-link {
-  color: var(--color-accent); /* Blue text on hover/active */
+  /* CHANGE: Nav active/hover uses the Orange accent color */
+  color: var(--color-accent); 
 }
 
 /* Bottom Bar Indicator Effect */
@@ -203,6 +218,7 @@ nav a::after {
   left: 0;
   width: 100%;
   height: 3px;
+  /* CHANGE: Nav indicator uses the Orange accent color */
   background-color: var(--color-accent);
   transform: scaleX(0);
   transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
@@ -242,6 +258,7 @@ h2 {
 h3 {
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
+  /* CHANGE: Year heading uses the Orange accent color */
   color: var(--color-accent);
   font-size: 1.3rem;
   border-bottom: 1px dotted var(--color-border);
@@ -258,7 +275,8 @@ ul li {
   margin-bottom: 0.75rem;
   position: relative;
   padding-left: 1.5rem;
-  border-bottom: 1px dotted rgba(0, 74, 173, 0.2);
+  /* Remove blue-based dotted line, use a neutral one */
+  border-bottom: 1px dotted var(--color-border);
   padding-bottom: 0.5rem;
 }
 
@@ -269,6 +287,7 @@ ul li::before {
     top: 0;
     font-size: 1.5em;
     line-height: 1;
+    /* CHANGE: Bullet uses the Orange accent color */
     color: var(--color-accent);
     font-weight: bold;
 }
@@ -288,8 +307,17 @@ ul li strong {
     list-style-type: none;
     padding-left: 0;
     counter-reset: pub-counter;
+    
+    /* Visual reversal of the list order */
+    display: flex;
+    flex-direction: column-reverse;
+    
+    /* Fix for counter display in reversed lists */
+    direction: rtl;
+    unicode-bidi: isolate;
 }
 
+/* Fix for list items inside the reversed list */
 .pub-list li {
     counter-increment: pub-counter;
     margin-bottom: 1.5rem;
@@ -298,6 +326,10 @@ ul li strong {
     border-bottom: 1px dashed var(--color-border);
     padding-bottom: 1rem;
     list-style: none;
+    
+    /* Reset text direction for the list item content */
+    direction: ltr; 
+    text-align: left;
 }
 
 .pub-list li::before {
@@ -306,14 +338,21 @@ ul li strong {
     left: 0;
     top: 0;
     font-weight: 700;
+    /* CHANGE: Counter number uses the Orange accent color */
     color: var(--color-accent);
     font-size: 1.1rem;
     padding-right: 0.5rem;
 }
 
+/* Fix for H3 (Year headings) inside the reversed list */
+.pub-list h3 {
+    direction: ltr; /* Reset year heading direction */
+    text-align: left;
+}
+
 .pub-authors {
     font-weight: 600;
-    color: var(--color-text); /* Dark text on light background */
+    color: var(--color-text);
 }
 
 .pub-title {
@@ -326,7 +365,8 @@ ul li strong {
 }
 
 .pub-details {
-    color: var(--color-subtle);
+    /* Details use the dark subtle color on light background */
+    color: var(--color-subtle-light); 
     font-size: 0.95rem;
 }
 
@@ -337,7 +377,8 @@ footer {
   background: var(--color-light);
   padding: 1rem 0;
   font-size: 0.85rem;
-  color: var(--color-subtle);
+  /* Footer uses the dark subtle color */
+  color: var(--color-subtle-light);
   border-top: 1px solid var(--color-border);
   text-align: center;
 }
@@ -357,7 +398,8 @@ footer {
     width: 120px;
     height: 120px;
     margin-bottom: 1rem;
-    border-color: var(--color-subtle);
+    /* Ensure orange border on small screens too */
+    border-color: var(--color-highlight);
   }
   .nav-links {
     gap: 1rem;
