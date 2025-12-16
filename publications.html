@@ -337,21 +337,17 @@
                         citation += `<span class="pub-title">“${title}”</span>, `;
                     }
                     
-                    // 3. Venue, followed by a comma and space
+                    // 3. Venue 
                     if (venueStr) {
                         citation += `${venueStr}`;
                     }
                     
-                    // 4. Details (Vol, Pages, etc.)
+                    // 4. Details (Vol, Pages, etc.) - always appended with a comma if details exist
                     if (detailsStr) {
-                        // Append details starting with a comma and space
                         citation += `, <span class="pub-details">${detailsStr}</span>`;
                     }
-                    
-                    // 5. Year (Now handled by the H3, so we remove the redundant year display here)
-                    // (Optional: If year must be inside the list item, add it here: `(${year})`)
 
-                    // 6. Links
+                    // 5. Links
                     if (links.length > 0) {
                         // Append links starting with a clear separator
                         citation += ` <span class="pub-links"> | ${links.join(" | ")}</span>`;
