@@ -318,21 +318,24 @@
                     // Manual number injection (Chronological, 1 to N)
                     const number = entry._chronologicalNumber; 
                     
-                    html += `<li class="pub-item-manual">`;
-                    html += `<span class="pub-number">${number}.</span>`; // Manually inject number
+                    // --- Construct the entire list item as a single string ---
+                    let listItemContent = '';
+
+                    // 1. Manually inject number and ensure space before content starts
+                    listItemContent += `<span class="pub-number">${number}.</span>`; 
                     
-                    // Wrap the entire publication citation into a content div
-                    html += `<div class="pub-text-content">`;
+                    // 2. Start the text content wrapper
+                    listItemContent += `<div class="pub-text-content">`;
 
                     // Start building the citation string:
                     let citation = '';
 
-                    // 1. Authors, followed by a comma and space
+                    // 1. Authors (Force space after)
                     if (authors) {
                         citation += `<span class="pub-authors">${authors}</span>, `;
                     }
                     
-                    // 2. Title, enclosed in quotes, followed by a comma and space
+                    // 2. Title (Force space after)
                     if (title) {
                         citation += `<span class="pub-title">“${title}”</span>, `;
                     }
@@ -342,22 +345,22 @@
                         citation += `${venueStr}`;
                     }
                     
-                    // 4. Details (Vol, Pages, etc.) - always appended with a comma if details exist
+                    // 4. Details (Vol, Pages, etc.) 
                     if (detailsStr) {
                         citation += `, <span class="pub-details">${detailsStr}</span>`;
                     }
 
                     // 5. Links
                     if (links.length > 0) {
-                        // Append links starting with a clear separator
                         citation += ` <span class="pub-links"> | ${links.join(" | ")}</span>`;
                     }
                     
                     // Insert the fully constructed citation string
-                    html += citation;
+                    listItemContent += citation;
 
-                    html += `</div>`; // Close pub-text-content
-                    html += "</li>";
+                    listItemContent += `</div>`; // Close pub-text-content
+                    
+                    html += `<li class="pub-item-manual">` + listItemContent + `</li>`;
                 });
             });
 
