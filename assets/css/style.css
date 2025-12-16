@@ -1,9 +1,9 @@
 /*
- * PROFESSIONAL & LIGHT STYLESHEET (Final Version - Manual Publication List)
+ * PROFESSIONAL & LIGHT STYLESHEET (Final Version - Publication List Fixed)
  */
 
 /* ------------------------------------------------------------------- */
-/* FIX 1: AGGRESSIVE UNIVERSAL RESET (Required to fix the white band issue) */
+/* FIX 1: AGGRESSIVE UNIVERSAL RESET (Needed to fix top white band) */
 /* ------------------------------------------------------------------- */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -242,6 +242,27 @@ section {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
 }
 
+/* Styling for the CV button */
+.btn-cv {
+    display: inline-block;
+    background-color: var(--color-accent); 
+    color: var(--color-light) !important; 
+    padding: 0.75rem 1.5rem;
+    margin-top: 1.5rem;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none !important; 
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    border: 1px solid var(--color-accent);
+}
+
+.btn-cv:hover {
+    background-color: #c95d12;
+    box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4);
+    transform: translateY(-2px);
+}
+
 h2 {
   margin-top: 0;
   margin-bottom: 1rem;
@@ -253,7 +274,7 @@ h2 {
 }
 
 h3 {
-  /* H3 styling remains for the year headings */
+  /* H3 styling for year headings */
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
   color: var(--color-accent);
@@ -262,7 +283,18 @@ h3 {
   padding-bottom: 0.25rem;
 }
 
-/* Lists (General for index.html) */
+/* Override default paragraph link behavior to use accent color */
+p a {
+    color: var(--color-accent); 
+    text-decoration: none; 
+}
+
+p a:hover {
+    text-decoration: underline; 
+}
+
+
+/* Lists (General for index.html/Contact) */
 ul {
   list-style: none;
   padding-left: 0;
@@ -295,31 +327,26 @@ ul li strong {
 /* --- PUBLICATION SPECIFIC STYLES (Targeting the manual list) --- */
 
 .pub-list-manual { 
-    /* FIX 2: Clear all list styling and remove the bottom margin from the <ul> element itself */
     list-style-type: none;
     padding-left: 0;
     margin-bottom: 0; 
 }
 
 .pub-list-manual li {
-    /* FIX 3: Remove default list item border/padding/position, and disable the custom bullet point */
     margin-bottom: 1.5rem;
     padding-left: 0;
-    position: static; /* Clear relative positioning */
+    position: static; 
     border-bottom: 1px dashed var(--color-border);
     padding-bottom: 1rem;
     list-style: none;
     text-align: left;
     
-    /* Use Flexbox for cleaner horizontal layout */
     display: flex;
-    /* FIX 4: Aligns item text with the number */
     align-items: baseline; 
     flex-wrap: wrap; 
 }
 
 .pub-list-manual li::before {
-    /* FIX 5: Disable the interfering default bullet point marker */
     content: none; 
 }
 
@@ -330,7 +357,6 @@ ul li strong {
     font-size: 1.1rem;
     padding-right: 0.5rem;
     flex-shrink: 0; 
-    /* FIX 6: Set a fixed width for the number column for neat alignment */
     width: 2.5rem; 
     text-align: right;
     margin-right: 0.5rem;
@@ -338,15 +364,17 @@ ul li strong {
 
 /* Container for the rest of the publication details */
 .pub-text-content {
-    /* FIX 7: Ensure the main content takes up the remaining space and wraps correctly */
-    display: block; 
-    flex-grow: 1;
-    line-height: 1.4; /* Tighter line height to reduce vertical gaps */
+    /* FIX: Change display to inline to force content immediately after .pub-number */
+    display: inline; 
+    flex-grow: 1; 
+    line-height: 1.4; 
+    /* Use min-width: 0 to handle potential flex sizing issues with long inline content */
+    min-width: 0;
 }
 
 /* Style the contents inside the text content block */
 .pub-text-content span, .pub-text-content a {
-    /* Ensure elements stay inline if possible, preventing large gaps between authors, title, etc. */
+    /* Ensure all citation components flow inline */
     display: inline;
 }
 
