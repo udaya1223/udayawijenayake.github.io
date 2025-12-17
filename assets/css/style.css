@@ -82,7 +82,7 @@ header {
 .tags {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: var(--color-highlight);
+  color: var(--color-subtle-light);
   opacity: 1;
 }
 
