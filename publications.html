@@ -171,203 +171,173 @@
     document.querySelector("[data-year]").textContent = new Date().getFullYear();
 
     // Human-friendly labels for BibTeX entry types
-    const TYPE_LABELS = {
-      article: "Journal Articles",
-      inproceedings: "Conference Papers",
-      incollection: "Book Chapters",
-      proceedings: "Edited Proceedings",
-      book: "Books",
-      phdthesis: "PhD Theses",
-      mastersthesis: "Master's Theses",
-      techreport: "Technical Reports",
-      misc: "Other Publications"
-    };
+  const TYPE_LABELS = {
+    article: "Journal Articles",
+    patent: "Patents & Intellectual Property", // Added Patent label
+    inproceedings: "Conference Papers",
+    incollection: "Book Chapters",
+    proceedings: "Edited Proceedings",
+    book: "Books",
+    phdthesis: "PhD Theses",
+    mastersthesis: "Master's Theses",
+    techreport: "Technical Reports",
+    misc: "Other Publications"
+  };
 
-    // Order in which sections appear
-    const TYPE_ORDER = [
-      "article",
-      "inproceedings",
-      "incollection",
-      "proceedings",
-      "book",
-      "phdthesis",
-      "mastersthesis",
-      "techreport",
-      "misc"
-    ];
+  // Order in which sections appear
+  const TYPE_ORDER = [
+    "patent",        // Added patent to the display order
+    "article",    
+    "inproceedings",
+    "incollection",
+    "proceedings",
+    "book",
+    "phdthesis",
+    "mastersthesis",
+    "techreport",
+    "misc"
+  ];
 
-    async function loadPublications() {
-      const root = document.getElementById("publications-root");
+  async function loadPublications() {
+    const root = document.getElementById("publications-root");
 
-      try {
-        const response = await fetch("publications.bib");
-        if (!response.ok) {
-          root.innerHTML = "<p>Could not load <code>publications.bib</code>. Ensure the file exists and is accessible.</p>";
-          return;
-        }
-
-        const bibtexText = await response.text();
-        const entries = bibtexParse.toJSON(bibtexText);
-
-        const groupedByType = {};
-
-        entries.forEach((entry) => {
-          const type = (entry.entryType || "misc").toLowerCase();
-
-          const rawTags = entry.entryTags || {};
-          const tags = {};
-          Object.keys(rawTags).forEach((key) => {
-            tags[key.toLowerCase()] = rawTags[key];
-          });
-
-          entry._normTags = tags;
-
-          if (!groupedByType[type]) groupedByType[type] = [];
-          groupedByType[type].push(entry);
-        });
-
-        let html = "";
-
-        TYPE_ORDER.forEach((type) => {
-          if (!groupedByType[type]) return;
-
-          const allOfType = groupedByType[type];
-
-          // PASS 1: sort chronologically (oldest first) and assign global number
-          allOfType.sort((a, b) => {
-            const yearA = parseInt(a._normTags.year, 10) || 0;
-            const yearB = parseInt(b._normTags.year, 10) || 0;
-            if (yearA !== yearB) return yearA - yearB;
-            return (a._normTags.title || '').localeCompare(b._normTags.title || '');
-          });
-
-          allOfType.forEach((entry, index) => {
-            entry._chronologicalNumber = index + 1;
-          });
-
-          const typeLabel = TYPE_LABELS[type] || type;
-          html += `<section class="pub-section"><h2>${typeLabel}</h2>`;
-
-          // Group by year
-          const groupedByYear = {};
-          allOfType.forEach(entry => {
-            const year = entry._normTags.year || "No year";
-            if (!groupedByYear[year]) groupedByYear[year] = [];
-            groupedByYear[year].push(entry);
-          });
-
-          // Years: newest first
-          const years = Object.keys(groupedByYear).sort((a, b) => {
-            const na = parseInt(a, 10);
-            const nb = parseInt(b, 10);
-            if (isNaN(na) && isNaN(nb)) return b.localeCompare(a);
-            if (isNaN(na)) return 1;
-            if (isNaN(nb)) return -1;
-            return nb - na;
-          });
-
-          years.forEach((year) => {
-            html += `<h3>${year}</h3>`;
-            html += `<ul class="pub-list-manual">`;
-
-            let pubsInYear = groupedByYear[year];
-
-            // Within year: newest first by chronologicalNumber
-            pubsInYear.sort((a, b) => {
-              return b._chronologicalNumber - a._chronologicalNumber;
-            });
-
-            pubsInYear.forEach((entry) => {
-              const t = entry._normTags || {};
-              const authors = t.author || "";
-              const title = t.title || "";
-              const journalOrBook =
-                t.journal || t.booktitle || t.school || t.howpublished || "";
-              const doi = t.doi || "";
-              const url = t.url || "";
-              const abstractUrl = t.abstracturl || "";
-
-              let venueStr = journalOrBook
-                ? `<span class="pub-venue">${journalOrBook}</span>`
-                : "";
-              let detailsParts = [];
-
-              if (t.volume) detailsParts.push("vol. " + t.volume);
-              if (t.number) detailsParts.push("no. " + t.number);
-              if (t.pages) detailsParts.push("pp. " + t.pages);
-
-              if (t["article-number"] && !t.pages) {
-                detailsParts.push("Article " + t["article-number"]);
-              }
-
-              const detailsStr = detailsParts.join(", ");
-              const links = [];
-
-              if (doi) {
-                links.push(`<a href="https://doi.org/${doi}" target="_blank">DOI</a>`);
-              } else if (url) {
-                links.push(`<a href="${url}" target="_blank">Link</a>`);
-              }
-              if (abstractUrl) {
-                links.push(`<a href="${abstractUrl}" target="_blank">Abstract</a>`);
-              }
-
-              const number = entry._chronologicalNumber;
-
-              let listItemContent = '';
-
-              // number
-              listItemContent += `<span class="pub-number">${number}.</span>`;
-
-              // text wrapper
-              listItemContent += `<div class="pub-text-content">`;
-
-              let citation = '';
-
-              if (authors) {
-                citation += `<span class="pub-authors">${authors}</span>, `;
-              }
-
-              if (title) {
-                citation += `<span class="pub-title">“${title}”</span>, `;
-              }
-
-              if (venueStr) {
-                citation += `${venueStr}`;
-              }
-
-              if (detailsStr) {
-                citation += `, <span class="pub-details">${detailsStr}</span>`;
-              }
-
-              if (links.length > 0) {
-                citation += ` <span class="pub-links"> | ${links.join(" | ")}</span>`;
-              }
-
-              listItemContent += citation;
-              listItemContent += `</div>`;
-
-              html += `<li class="pub-item-manual">${listItemContent}</li>`;
-            });
-
-            html += `</ul>`;
-          });
-
-          html += `</section>`;
-        });
-
-        if (!html) {
-          html = "<p>No publications found in <code>publications.bib</code>.</p>";
-        }
-
-        root.innerHTML = html;
-      } catch (err) {
-        console.error(err);
-        root.innerHTML = "<p>Error while loading publications. Check your console for details.</p>";
+    try {
+      const response = await fetch("publications.bib");
+      if (!response.ok) {
+        root.innerHTML = "<p>Could not load <code>publications.bib</code>. Ensure the file exists and is accessible.</p>";
+        return;
       }
-    }
 
-    loadPublications();
+      const bibtexText = await response.text();
+      const entries = bibtexParse.toJSON(bibtexText);
+
+      const groupedByType = {};
+
+      entries.forEach((entry) => {
+        const type = (entry.entryType || "misc").toLowerCase();
+        const rawTags = entry.entryTags || {};
+        const tags = {};
+        Object.keys(rawTags).forEach((key) => {
+          tags[key.toLowerCase()] = rawTags[key];
+        });
+
+        entry._normTags = tags;
+
+        if (!groupedByType[type]) groupedByType[type] = [];
+        groupedByType[type].push(entry);
+      });
+
+      let html = "";
+
+      TYPE_ORDER.forEach((type) => {
+        if (!groupedByType[type]) return;
+
+        const allOfType = groupedByType[type];
+
+        // PASS 1: sort chronologically
+        allOfType.sort((a, b) => {
+          const yearA = parseInt(a._normTags.year, 10) || 0;
+          const yearB = parseInt(b._normTags.year, 10) || 0;
+          if (yearA !== yearB) return yearA - yearB;
+          return (a._normTags.title || '').localeCompare(b._normTags.title || '');
+        });
+
+        allOfType.forEach((entry, index) => {
+          entry._chronologicalNumber = index + 1;
+        });
+
+        const typeLabel = TYPE_LABELS[type] || type;
+        html += `<section class="pub-section"><h2>${typeLabel}</h2>`;
+
+        const groupedByYear = {};
+        allOfType.forEach(entry => {
+          const year = entry._normTags.year || "No year";
+          if (!groupedByYear[year]) groupedByYear[year] = [];
+          groupedByYear[year].push(entry);
+        });
+
+        const years = Object.keys(groupedByYear).sort((a, b) => {
+          const na = parseInt(a, 10);
+          const nb = parseInt(b, 10);
+          if (isNaN(na) && isNaN(nb)) return b.localeCompare(a);
+          if (isNaN(na)) return 1;
+          if (isNaN(nb)) return -1;
+          return nb - na;
+        });
+
+        years.forEach((year) => {
+          html += `<h3>${year}</h3>`;
+          html += `<ul class="pub-list-manual">`;
+
+          let pubsInYear = groupedByYear[year];
+          pubsInYear.sort((a, b) => b._chronologicalNumber - a._chronologicalNumber);
+
+          pubsInYear.forEach((entry) => {
+            const t = entry._normTags || {};
+            const authors = t.author || "";
+            const title = t.title || "";
+            
+            // Handle Venue: For patents, use 'type' or 'institution'
+            let venue = t.journal || t.booktitle || t.school || t.howpublished || "";
+            if (type === "patent") {
+              venue = t.type || t.institution || "Patent";
+            }
+
+            const doi = t.doi || "";
+            const url = t.url || "";
+            const abstractUrl = t.abstracturl || "";
+
+            let venueStr = venue ? `<span class="pub-venue">${venue}</span>` : "";
+            
+            let detailsParts = [];
+            // Patent specific field: Number
+            if (t.number) {
+                detailsParts.push(type === "patent" ? "No. " + t.number : "no. " + t.number);
+            }
+            if (t.volume) detailsParts.push("vol. " + t.volume);
+            if (t.pages) detailsParts.push("pp. " + t.pages);
+            if (t["article-number"] && !t.pages) detailsParts.push("Article " + t["article-number"]);
+
+            const detailsStr = detailsParts.join(", ");
+            const links = [];
+
+            if (doi) {
+              links.push(`<a href="https://doi.org/${doi}" target="_blank">DOI</a>`);
+            } else if (url) {
+              links.push(`<a href="${url}" target="_blank">Link</a>`);
+            }
+            if (abstractUrl) {
+              links.push(`<a href="${abstractUrl}" target="_blank">Abstract</a>`);
+            }
+
+            const number = entry._chronologicalNumber;
+            let listItemContent = `<span class="pub-number">${number}.</span>`;
+            listItemContent += `<div class="pub-text-content">`;
+
+            let citation = '';
+            if (authors) citation += `<span class="pub-authors">${authors}</span>, `;
+            if (title) citation += `<span class="pub-title">“${title}”</span>, `;
+            if (venueStr) citation += `${venueStr}`;
+            if (detailsStr) citation += `, <span class="pub-details">${detailsStr}</span>`;
+            if (links.length > 0) citation += ` <span class="pub-links"> | ${links.join(" | ")}</span>`;
+
+            listItemContent += citation + `</div>`;
+            html += `<li class="pub-item-manual">${listItemContent}</li>`;
+          });
+          html += `</ul>`;
+        });
+        html += `</section>`;
+      });
+
+      if (!html) html = "<p>No publications found in <code>publications.bib</code>.</p>";
+      root.innerHTML = html;
+    } catch (err) {
+      console.error(err);
+      root.innerHTML = "<p>Error while loading publications. Check your console for details.</p>";
+    }
+  }
+
+  loadPublications();
   </script>
 </body>
 </html>
